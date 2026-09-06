@@ -16,7 +16,7 @@ targets:
       - path: KingShare
         excludes:
           - Info.plist
-          - HUDHelper
+          - HUDHelper/main.swift
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hai.king
