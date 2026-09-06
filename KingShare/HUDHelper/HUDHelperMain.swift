@@ -20,7 +20,11 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
-        let statePath = argument(after: "--state") ?? HUDTransport.stateURL().path
+        startHUD(statePath: argument(after: "--state") ?? HUDTransport.stateURL().path)
+        return true
+    }
+
+    func startHUD(statePath: String) {
         let stateURL = URL(fileURLWithPath: statePath)
         let renderer = HUDRenderView(frame: UIScreen.main.bounds)
         // Initialize the plugin process before creating its HUD window. The
@@ -51,7 +55,6 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
             }
         }
         receiver?.start()
-        return true
     }
 
     private func argument(after flag: String) -> String? {
