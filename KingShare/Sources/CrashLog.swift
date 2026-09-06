@@ -8,11 +8,13 @@ final class CrashLog {
     static func start() {
         guard !started else { return }
         started = true
-        NSSetUncaughtExceptionHandler { exception in
-            write(name: exception.name.rawValue,
-                  reason: exception.reason ?? "",
-                  callStack: exception.callStackSymbols.joined(separator: "\n"))
-        }
+        NSSetUncaughtExceptionHandler(CrashLog.exceptionHandler)
+    }
+
+    private static func exceptionHandler(_ exception: NSException) {
+        CrashLog.write(name: exception.name.rawValue,
+                       reason: exception.reason ?? "",
+                       callStack: exception.callStackSymbols.joined(separator: "\n"))
     }
 
     private static func write(name: String, reason: String, callStack: String) {
