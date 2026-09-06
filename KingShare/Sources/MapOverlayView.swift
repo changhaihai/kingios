@@ -174,7 +174,7 @@ final class MapOverlayView: UIView {
             heroes = heroes.filter { !$0.ownTeam }
         }
         for hero in heroes {
-            let avatarScale = config.avatarScale
+            let avatarScale = CGFloat(config.avatarScale)
             let diameter = 40 * avatarScale * scale
             let radius = diameter / 2
             let barHeight = 7 * avatarScale * scale
