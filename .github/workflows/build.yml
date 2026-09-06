@@ -1,14 +1,11 @@
 name: Build unsigned IPA (TrollStore)
-
 on:
   push:
     branches: [main, master]
     tags: ['v*']
   workflow_dispatch:
-
 permissions:
   contents: write
-
 jobs:
   build:
     runs-on: macos-14
@@ -24,23 +21,22 @@ jobs:
           MERCHANT_CODE: ${{ secrets.MERCHANT_CODE }}
           CLIENT_SIGNATURE: ${{ secrets.CLIENT_SIGNATURE }}
         run: |
-          if [ -n "$MERCHANT_CODE" ] && [ -n "$CLIENT_SIGNATURE" ]; then
-            python3 - <<'PY'
+          python3 << EOF
 import base64, plistlib, os
 p = "KingShare/Config.plist"
-with open(p, "rb") as f:
-    data = plistlib.load(f)
-def pack(v):
-    return base64.b64encode(bytes([b ^ 0x5A for b in v.encode("utf-8")])).decode()
-data["MerchantPayload"] = pack(os.environ["MERCHANT_CODE"])
-data["ClientSignaturePayload"] = pack(os.environ["CLIENT_SIGNATURE"])
-with open(p, "wb") as f:
-    plistlib.dump(data, f)
-print("credentials injected")
-PY
-          else
-            echo "secrets not set, keeping Config.plist values"
-          fi
+if os.getenv("MERCHANT_CODE") and os.getenv("CLIENT_SIGNATURE"):
+    with open(p, "rb") as f:
+        data = plistlib.load(f)
+    def pack(v):
+        return base64.b64encode(bytes([b ^ 0x5A for b in v.encode("utf-8")])).decode()
+    data["MerchantPayload"] = pack(os.environ["MERCHANT_CODE"])
+    data["ClientSignaturePayload"] = pack(os.environ["CLIENT_SIGNATURE"])
+    with open(p, "wb") as f:
+        plistlib.dump(data, f)
+    print("credentials injected")
+else:
+    print("secrets not set, keeping Config.plist values")
+EOF
 
       - name: Generate Xcode project
         run: xcodegen generate
