@@ -40,6 +40,9 @@ final class SettingsWindow {
         }
         let frame = panelFrame()
         let w = UIWindow(frame: frame)
+        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            w.windowScene = scene
+        }
         w.windowLevel = UIWindow.Level.alert + 20
         w.rootViewController = vc
         w.backgroundColor = .clear
@@ -84,6 +87,9 @@ final class SettingsWindow {
         let view = BallView(size: size)
         view.onTap = { [weak self] in self?.show() }
         let w = UIWindow(frame: CGRect(x: 14, y: 80, width: size, height: size))
+        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            w.windowScene = scene
+        }
         w.windowLevel = UIWindow.Level.alert + 20
         let vc = UIViewController()
         vc.view = view
@@ -117,6 +123,9 @@ final class SettingsWindow {
         let vc = UIViewController()
         vc.view = view
         let w = UIWindow(frame: CGRect(x: x, y: y, width: frameSize, height: frameSize))
+        if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            w.windowScene = scene
+        }
         w.windowLevel = UIWindow.Level.alert + 15
         w.rootViewController = vc
         w.backgroundColor = .clear
