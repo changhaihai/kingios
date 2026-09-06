@@ -55,7 +55,7 @@ final class OverlaySession {
         if let topWindow = topWindow {
             topWindow.frame = topInfoFrame()
             let opacity = AppPrefs.shared.topOpacity()
-            topWindow.alpha = min(max(0.5 * opacity, 0.15), 0.5)
+            topWindow.alpha = CGFloat(min(max(0.5 * opacity, 0.15), 0.5))
         }
         mapWindow?.alpha = 0.4
     }
@@ -95,7 +95,7 @@ final class OverlaySession {
             w.rootViewController = vc
             w.isUserInteractionEnabled = false
             let opacity = AppPrefs.shared.topOpacity()
-            w.alpha = min(max(0.5 * opacity, 0.15), 0.5)
+            w.alpha = CGFloat(min(max(0.5 * opacity, 0.15), 0.5))
             w.isHidden = false
             topWindow = w
             topView = v
