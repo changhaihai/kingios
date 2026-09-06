@@ -6,7 +6,9 @@ import AVFoundation
 @_silgen_name("hai_register_global_window")
 private func hai_register_global_window(_ window: UIWindow)
 
-@main
+@objc(HUDMainApplication)
+final class HUDMainApplication: UIApplication {}
+
 final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
     private var receiver: HUDStateReceiver?
     private var roomClient: HUDRoomClient?
