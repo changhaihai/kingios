@@ -27,9 +27,6 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
     func startHUD(statePath: String) {
         let stateURL = URL(fileURLWithPath: statePath)
         let renderer = HUDRenderView(frame: UIScreen.main.bounds)
-        // Initialize the plugin process before creating its HUD window. The
-        // window server promotion only applies to windows created afterward.
-        completeAsSystemPluginIfAvailable()
         startKeepAliveAudio()
         windowController = HUDGlobalWindowController(renderView: renderer)
         windowController?.show()
@@ -61,18 +58,6 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
         guard let index = CommandLine.arguments.firstIndex(of: flag) else { return nil }
         let next = index + 1
         return CommandLine.arguments.indices.contains(next) ? CommandLine.arguments[next] : nil
-    }
-
-    private func completeAsSystemPluginIfAvailable() {
-        let app = UIApplication.shared
-        let accessibilityInit = Selector(("_accessibilityInit"))
-        if app.responds(to: accessibilityInit) {
-            app.perform(accessibilityInit)
-        }
-        let pluginRun = Selector(("__completeAndRunAsPlugin"))
-        if app.responds(to: pluginRun) {
-            app.perform(pluginRun)
-        }
     }
 
     private func startKeepAliveAudio() {
@@ -243,7 +228,7 @@ final class HUDGlobalWindowController {
         host.view.backgroundColor = .clear
         let window = HUDSystemWindow(frame: UIScreen.main.bounds)
         window.rootViewController = host
-        window.windowLevel = UIWindow.Level(rawValue: UIWindow.Level.alert.rawValue + 100)
+        window.windowLevel = UIWindow.Level(rawValue: 10_000_010)
         window.isOpaque = false
         window.backgroundColor = .clear
         window.isUserInteractionEnabled = false
