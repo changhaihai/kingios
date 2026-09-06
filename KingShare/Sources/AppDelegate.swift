@@ -8,6 +8,9 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         CrashLog.start()
         KeepAlive.shared.start()
         let window = UIWindow(frame: UIScreen.main.bounds)
+        if let scene = application.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+            window.windowScene = scene
+        }
         window.backgroundColor = Theme.pageBg
         window.rootViewController = MainViewController()
         window.makeKeyAndVisible()
