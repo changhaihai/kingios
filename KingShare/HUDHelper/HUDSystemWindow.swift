@@ -6,9 +6,9 @@ import UIKit
 /// private Objective-C dispatch without linking a private framework.
 final class HUDSystemWindow: UIWindow {
     @objc(_isSystemWindow)
-    func hud_isSystemWindow() -> Bool { true }
+    class func hud_isSystemWindow() -> Bool { true }
 
-    @objc(_windowServerHostingManaged)
+    @objc(_isWindowServerHostingManaged)
     func hud_windowServerHostingManaged() -> Bool { false }
 
     @objc(_ignoresHitTest)
