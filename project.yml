@@ -17,6 +17,8 @@ targets:
         excludes:
           - Info.plist
           - HUDHelper/main.swift
+          - HUDHelper/Info.plist
+          - HUDHelper/entitlements.plist
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hai.king
