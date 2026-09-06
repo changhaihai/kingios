@@ -1,0 +1,36 @@
+name: KingShare
+options:
+  bundleIdPrefix: com.hai
+  deploymentTarget:
+    iOS: "14.0"
+  createIntermediateGroups: true
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    IPHONEOS_DEPLOYMENT_TARGET: "14.0"
+targets:
+  KingShare:
+    type: application
+    platform: iOS
+    sources:
+      - path: KingShare
+        excludes:
+          - Info.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hai.king
+        PRODUCT_NAME: KingShare
+        INFOPLIST_FILE: KingShare/Info.plist
+        MARKETING_VERSION: "1.1.6"
+        CURRENT_PROJECT_VERSION: "4"
+        TARGETED_DEVICE_FAMILY: "1"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGN_IDENTITY: ""
+        ENABLE_BITCODE: "NO"
+        GENERATE_INFOPLIST_FILE: "NO"
+        SUPPORTS_MACCATALYST: "NO"
+    scheme:
+      gatherCoverageData: false
