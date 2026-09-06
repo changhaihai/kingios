@@ -79,13 +79,12 @@ final class HUDProcessController: ObservableObject {
     }
 
     private func spawnHelper() {
-        let helperURL = Bundle.main.url(forResource: "HaiHUD", withExtension: "app")
-            ?? Bundle.main.bundleURL.appendingPathComponent("Frameworks/HaiHUD.app")
-        guard FileManager.default.fileExists(atPath: helperURL.path) else {
-            state = "缺少 HaiHUD.app"
+        // TrollSpeed spawns the same signed executable in HUD mode. This is
+        // what lets TrollStore's root-persona launch survive app switching.
+        guard let executableURL = Bundle.main.executableURL else {
+            state = "主程序路径无效"
             return
         }
-        let executableURL = helperURL.appendingPathComponent("HaiHUD")
         guard FileManager.default.isExecutableFile(atPath: executableURL.path) else {
             state = "HUD 可执行文件无效"
             return
