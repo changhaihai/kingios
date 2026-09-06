@@ -17,6 +17,7 @@ final class OverlaySession {
     private var topView: TopInfoOverlayView?
     private var socket: RoomWebSocket?
     private var room: String = ""
+    private var latestFrame: BattleFrame?
     private var secureObserver: NSObjectProtocol?
 
     func connect(room: String) {
@@ -26,13 +27,17 @@ final class OverlaySession {
         ensureWindows()
         applySettings()
         applyTopInfoVisibility()
+        latestFrame = nil
+        HUDProcessController.shared.start(room: room, frame: nil, settings: AppPrefs.shared.displaySettings())
         let ws = RoomWebSocket(room: room, onState: { _ in }, onFrame: { [weak self] raw in
             guard let self = self else { return }
             self.lastFrameAt = Date().timeIntervalSince1970 * 1000
             if let frame = BattleFrameParser.parse(raw) {
                 DispatchQueue.main.async {
+                    self.latestFrame = frame
                     self.mapView?.submit(frame)
                     self.topView?.submit(frame)
+                    self.pushHUDState(enabled: true)
                 }
             }
         })
@@ -42,7 +47,9 @@ final class OverlaySession {
 
     func stop() {
         stopSocket()
+        HUDProcessController.shared.stop(settings: AppPrefs.shared.displaySettings())
         room = ""
+        latestFrame = nil
         removeWindows()
         running = false
         lastFrameAt = 0
@@ -50,7 +57,8 @@ final class OverlaySession {
     }
 
     func applySettings() {
-        mapView?.updateSettings(AppPrefs.shared.displaySettings())
+        let settings = AppPrefs.shared.displaySettings()
+        mapView?.updateSettings(settings)
         topView?.updateScale(CGFloat(AppPrefs.shared.topSizeScale()))
         if let topWindow = topWindow {
             topWindow.frame = topInfoFrame()
@@ -58,11 +66,13 @@ final class OverlaySession {
             topWindow.alpha = CGFloat(min(max(0.5 * opacity, 0.15), 0.5))
         }
         mapWindow?.alpha = 0.4
+        if running { HUDProcessController.shared.update(frame: latestFrame, settings: settings, enabled: true) }
     }
 
     func applyTopInfoVisibility() {
         let enabled = AppPrefs.shared.bool(AppPrefs.topInfoKey, true)
         topWindow?.isHidden = !enabled
+        if running { HUDProcessController.shared.update(frame: latestFrame, settings: AppPrefs.shared.displaySettings(), enabled: true) }
     }
 
     func securityChanged() {
@@ -156,5 +166,9 @@ final class OverlaySession {
     private func stopSocket() {
         socket?.stop()
         socket = nil
+    }
+
+    private func pushHUDState(enabled: Bool) {
+        HUDProcessController.shared.update(frame: latestFrame, settings: AppPrefs.shared.displaySettings(), enabled: enabled)
     }
 }
