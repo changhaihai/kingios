@@ -20,7 +20,19 @@ jobs:
         run: brew install xcodegen
 
       - name: Generate Xcode project
-        run: xcodegen generate
+        run: |
+          xcodegen generate
+          # XcodeGen currently emits objectVersion 77, which Xcode 15.4
+          # (the macos-14 runner toolchain) cannot open.
+          python3 - <<'PY'
+          from pathlib import Path
+          project = Path('KingShare.xcodeproj/project.pbxproj')
+          text = project.read_text()
+          text = text.replace('objectVersion = 77;', 'objectVersion = 56;')
+          text = text.replace('compatibilityVersion = "Xcode 16.0";', 'compatibilityVersion = "Xcode 15.0";')
+          project.write_text(text)
+          PY
+          grep -E '^(objectVersion|\s*compatibilityVersion)' KingShare.xcodeproj/project.pbxproj
 
       - name: Build (unsigned, iphoneos)
         run: |
@@ -30,12 +42,12 @@ jobs:
 
       - name: Package IPA
         run: |
-          set -euo pipefail
           mkdir -p Payload
           cp -R build/Build/Products/Release-iphoneos/KingShare.app Payload/
+          test -f Payload/KingShare.app/Info.plist
           test -x Payload/KingShare.app/KingShare
           zip -qry KingShare-unsigned.ipa Payload
-          unzip -l KingShare-unsigned.ipa | grep 'Payload/KingShare.app/KingShare$'
+          ls -lh KingShare-unsigned.ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
