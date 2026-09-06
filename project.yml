@@ -16,6 +16,7 @@ targets:
       - path: KingShare
         excludes:
           - Info.plist
+          - HUDHelper
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hai.king
@@ -32,5 +33,30 @@ targets:
         ENABLE_BITCODE: "NO"
         GENERATE_INFOPLIST_FILE: "NO"
         SUPPORTS_MACCATALYST: "NO"
+    scheme:
+      gatherCoverageData: false
+  HaiHUD:
+    type: application
+    platform: iOS
+    sources:
+      - path: KingShare/HUDHelper
+      - path: KingShare/HUDWindowBridge.m
+      - path: KingShare/HUDProtocol.swift
+      - path: KingShare/Sources/BattleFrame.swift
+      - path: KingShare/Sources/AppPrefs.swift
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hai.ios.hud
+        PRODUCT_NAME: HaiHUD
+        INFOPLIST_FILE: KingShare/HUDHelper/Info.plist
+        CODE_SIGN_STYLE: Manual
+        CODE_SIGNING_ALLOWED: "NO"
+        CODE_SIGNING_REQUIRED: "NO"
+        CODE_SIGN_IDENTITY: ""
+        ENABLE_BITCODE: "NO"
+        GENERATE_INFOPLIST_FILE: "NO"
+        SUPPORTS_MACCATALYST: "NO"
+        TARGETED_DEVICE_FAMILY: "1"
+        SWIFT_OBJC_BRIDGING_HEADER: ""
     scheme:
       gatherCoverageData: false
