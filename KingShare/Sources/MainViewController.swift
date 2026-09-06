@@ -926,8 +926,8 @@ final class MainViewController: UIViewController {
         selectedHome = home
         homeScroll?.isHidden = !home
         aboutScroll?.isHidden = home
-        homeTab?.selected = home
-        aboutTab?.selected = !home
+        homeTab?.isActive = home
+        aboutTab?.isActive = !home
     }
 
     private func openExternalUrl(_ url: String) {
@@ -1198,10 +1198,10 @@ private final class NavButton: UIControl {
     private let iconLabel = UILabel()
     private let caption = UILabel()
 
-    var selected: Bool = false {
+    var isActive: Bool = false {
         didSet {
-            iconLabel.textColor = selected ? Theme.gold : Theme.mutedText
-            caption.textColor = selected ? Theme.gold : Theme.mutedText
+            iconLabel.textColor = isActive ? Theme.gold : Theme.mutedText
+            caption.textColor = isActive ? Theme.gold : Theme.mutedText
         }
     }
 
@@ -1226,7 +1226,7 @@ private final class NavButton: UIControl {
             iconLabel.heightAnchor.constraint(equalToConstant: 20),
             caption.heightAnchor.constraint(equalToConstant: 16)
         ])
-        self.selected = selected
+        self.isActive = selected
     }
 
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
