@@ -19,6 +19,9 @@ jobs:
       - name: Install XcodeGen
         run: brew install xcodegen
 
+      - name: Install ldid
+        run: brew install ldid
+
       - name: Generate Xcode project
         run: |
           xcodegen generate
@@ -31,20 +34,32 @@ jobs:
           xcodebuild -project KingShare.xcodeproj -scheme KingShare \
             -configuration Release -sdk iphoneos -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+          xcodebuild -project KingShare.xcodeproj -scheme HaiHUD \
+            -configuration Release -sdk iphoneos -derivedDataPath build-hud \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
-      - name: Package IPA
+      - name: Sign, embed helper, and package IPA
         run: |
           mkdir -p Payload
           cp -R build/Build/Products/Release-iphoneos/KingShare.app Payload/
+          test -x build-hud/Build/Products/Release-iphoneos/HaiHUD.app/HaiHUD
+          mkdir -p Payload/KingShare.app/Frameworks
+          cp -R build-hud/Build/Products/Release-iphoneos/HaiHUD.app Payload/KingShare.app/Frameworks/
+          # The helper is a separately signed executable so TrollStore can
+          # launch it as the root-spawned HUD process.
+          ldid -SKingShare/HUDHelper/entitlements.plist Payload/KingShare.app/Frameworks/HaiHUD.app/HaiHUD
+          ldid -SKingShare/HUDHelper/entitlements.plist Payload/KingShare.app/KingShare
           test -f Payload/KingShare.app/Info.plist
           test -x Payload/KingShare.app/KingShare
+          test -f Payload/KingShare.app/Frameworks/HaiHUD.app/Info.plist
+          test -x Payload/KingShare.app/Frameworks/HaiHUD.app/HaiHUD
           zip -qry KingShare-unsigned.ipa Payload
           ls -lh KingShare-unsigned.ipa
 
       - name: Upload IPA artifact
         uses: actions/upload-artifact@v4
         with:
-          name: KingShare-unsigned-ipa
+          name: HaiIOS-TrollStore
           path: KingShare-unsigned.ipa
           if-no-files-found: error
 
