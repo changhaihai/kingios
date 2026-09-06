@@ -77,6 +77,9 @@ final class OverlaySession {
             let vc = UIViewController()
             vc.view = v
             let w = UIWindow(frame: UIScreen.main.bounds)
+            if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+                w.windowScene = scene
+            }
             w.windowLevel = UIWindow.Level.alert + 10
             w.rootViewController = vc
             w.isUserInteractionEnabled = false
@@ -91,6 +94,9 @@ final class OverlaySession {
             let vc = UIViewController()
             vc.view = v
             let w = UIWindow(frame: topInfoFrame())
+            if let scene = UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first {
+                w.windowScene = scene
+            }
             w.windowLevel = UIWindow.Level.alert + 11
             w.rootViewController = vc
             w.isUserInteractionEnabled = false
