@@ -1,6 +1,6 @@
 import Foundation
 
-struct Hero {
+struct Hero: Codable {
     let id: String
     let x: Float
     let y: Float
@@ -15,19 +15,19 @@ struct Hero {
     let ai: Bool
 }
 
-struct Resource {
+struct Resource: Codable {
     let x: Float
     let y: Float
     let cooldown: Int
 }
 
-struct Minion {
+struct Minion: Codable {
     let x: Float
     let y: Float
     let blue: Bool
 }
 
-struct Tower {
+struct Tower: Codable {
     let x: Float
     let y: Float
     let hp: Float
@@ -35,7 +35,7 @@ struct Tower {
     let blue: Bool
 }
 
-struct BattleFrame {
+struct BattleFrame: Codable {
     let heroes: [Hero]
     let resources: [Resource]
     let minions: [Minion]
