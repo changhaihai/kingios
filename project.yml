@@ -44,6 +44,8 @@ targets:
       - path: KingShare/HUDProtocol.swift
       - path: KingShare/Sources/BattleFrame.swift
       - path: KingShare/Sources/AppPrefs.swift
+    resources:
+      - path: KingShare/Resources/silence.wav
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.hai.ios.hud
