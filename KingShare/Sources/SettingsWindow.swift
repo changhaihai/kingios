@@ -15,7 +15,7 @@ final class SettingsWindow {
         guard panelWindow == nil else { return }
         hideBall()
         let vc = SettingsPanelViewController()
-        vc.onHide = { [weak self] in self?.hidePanel(showBall: true) }
+        vc.onHide = { [weak self] in self?.hidePanel(showBallAfter: true) }
         vc.onSettingsChanged = { [weak self] in self?.pushSettings() }
         vc.onSpacingChanged = { [weak self] in
             guard let self = self, self.calibrationWindow != nil else { return }
@@ -49,7 +49,7 @@ final class SettingsWindow {
     }
 
     func stop() {
-        hidePanel(showBall: false)
+        hidePanel(showBallAfter: false)
         hideBall()
         hideCalibration()
     }
@@ -70,12 +70,12 @@ final class SettingsWindow {
         return CGRect(x: 12, y: 72, width: safeWidth, height: safeHeight)
     }
 
-    private func hidePanel(showBall: Bool) {
+    private func hidePanel(showBallAfter: Bool) {
         panelVC?.stopPolling()
         panelWindow?.isHidden = true
         panelWindow = nil
         panelVC = nil
-        if showBall { showBall() }
+        if showBallAfter { showBall() }
     }
 
     private func showBall() {
@@ -136,6 +136,8 @@ final class SettingsWindow {
         calibrationView = nil
         panelVC?.setCalibrationButtonTitle("显示校准框")
     }
+
+    var hasCalibration: Bool { calibrationView != nil }
 
     private func saveCalibration(_ frame: CGRect) {
         let calScale = calibrationScale
@@ -486,8 +488,8 @@ final class SettingsPanelViewController: UIViewController {
         tabAdjust.addTarget(self, action: #selector(tabAdjustTapped), for: .touchUpInside)
         bar.addArrangedSubview(tabSwitch)
         bar.addArrangedSubview(tabAdjust)
-        tabSwitch.selected = selectedTab == 0
-        tabAdjust.selected = selectedTab == 1
+        tabSwitch.isActive = selectedTab == 0
+        tabAdjust.isActive = selectedTab == 1
         return bar
     }
 
@@ -717,7 +719,7 @@ final class SettingsPanelViewController: UIViewController {
         fit.addTarget(self, action: #selector(applyResolutionFit), for: .touchUpInside)
         fitButton = fit
 
-        let calibrate = quickButton(SettingsWindow.shared.calibrationView == nil ? "显示校准框" : "关闭校准框")
+        let calibrate = quickButton(SettingsWindow.shared.hasCalibration ? "关闭校准框" : "显示校准框")
         calibrate.addTarget(self, action: #selector(toggleCalibration), for: .touchUpInside)
         calibrateButton = calibrate
 
@@ -782,8 +784,8 @@ final class SettingsPanelViewController: UIViewController {
         selectedTab = index
         switchScroll.isHidden = index != 0
         adjustScroll.isHidden = index != 1
-        tabSwitch.selected = index == 0
-        tabAdjust.selected = index == 1
+        tabSwitch.isActive = index == 0
+        tabAdjust.isActive = index == 1
     }
 
     @objc private func checkChanged(_ sender: UISwitch) {
@@ -903,10 +905,10 @@ private final class TabButton: UIControl {
     private let label = UILabel()
     private let underline = UIView()
 
-    var selected: Bool = false {
+    var isActive: Bool = false {
         didSet {
-            label.textColor = selected ? Theme.gold : Theme.mutedText
-            underline.backgroundColor = selected ? Theme.gold : .clear
+            label.textColor = isActive ? Theme.gold : Theme.mutedText
+            underline.backgroundColor = isActive ? Theme.gold : .clear
         }
     }
 
