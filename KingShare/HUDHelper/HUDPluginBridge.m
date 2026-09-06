@@ -1,6 +1,7 @@
 #import <UIKit/UIKit.h>
 #import <dlfcn.h>
 #import <objc/runtime.h>
+#import <objc/message.h>
 
 typedef void (*VoidFn)(void);
 typedef void (*ClassFn)(Class);
