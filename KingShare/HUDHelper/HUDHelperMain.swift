@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import Darwin
+import AVFoundation
 
 @_silgen_name("hai_register_global_window")
 private func hai_register_global_window(_ window: UIWindow)
@@ -10,6 +11,7 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
     private var receiver: HUDStateReceiver?
     private var roomClient: HUDRoomClient?
     private var windowController: HUDGlobalWindowController?
+    private var keepAlivePlayer: AVAudioPlayer?
 
     func application(
         _ application: UIApplication,
@@ -21,6 +23,7 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
         // Initialize the plugin process before creating its HUD window. The
         // window server promotion only applies to windows created afterward.
         completeAsSystemPluginIfAvailable()
+        startKeepAliveAudio()
         windowController = HUDGlobalWindowController(renderView: renderer)
         windowController?.show()
 
@@ -63,6 +66,24 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
         let pluginRun = Selector(("__completeAndRunAsPlugin"))
         if app.responds(to: pluginRun) {
             app.perform(pluginRun)
+        }
+    }
+
+    private func startKeepAliveAudio() {
+        do {
+            let audio = AVAudioSession.sharedInstance()
+            try audio.setCategory(.playback, options: [.mixWithOthers])
+            try audio.setActive(true)
+            guard let url = Bundle.main.url(forResource: "silence", withExtension: "wav") else { return }
+            let player = try AVAudioPlayer(contentsOf: url)
+            player.numberOfLoops = -1
+            player.volume = 0
+            player.prepareToPlay()
+            player.play()
+            keepAlivePlayer = player
+        } catch {
+            // Background audio is an extra lifecycle guard; rendering still
+            // works on systems that reject the session category.
         }
     }
 }
