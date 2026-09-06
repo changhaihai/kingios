@@ -5,15 +5,25 @@
 typedef void (*VoidFn)(void);
 typedef void (*ClassFn)(Class);
 
+static void loadPrivateFramework(const char *path) {
+    dlopen(path, RTLD_NOW | RTLD_GLOBAL);
+}
+
 static void callVoidSymbol(const char *name) {
     VoidFn fn = (VoidFn)dlsym(RTLD_DEFAULT, name);
     if (fn) fn();
 }
 
 void hai_prepare_hud_plugin(void) {
-    // These symbols are exported by UIKit/GraphicsServices on TrollStore
-    // supported iOS versions but are intentionally resolved at runtime.
-    callVoidSymbol("UIScreenInitialize");
+    loadPrivateFramework("/System/Library/PrivateFrameworks/GraphicsServices.framework/GraphicsServices");
+    loadPrivateFramework("/System/Library/PrivateFrameworks/BackBoardServices.framework/BackBoardServices");
+    loadPrivateFramework("/System/Library/PrivateFrameworks/SpringBoardServices.framework/SpringBoardServices");
+
+    Class screenClass = objc_getClass("UIScreen");
+    SEL initializeSel = sel_registerName("initialize");
+    if (screenClass && [screenClass respondsToSelector:initializeSel]) {
+        ((void (*)(id, SEL))objc_msgSend)(screenClass, initializeSel);
+    }
     callVoidSymbol("GSInitialize");
     callVoidSymbol("BKSDisplayServicesStart");
     callVoidSymbol("UIApplicationInitialize");
