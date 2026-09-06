@@ -1,0 +1,73 @@
+name: Build unsigned IPA (TrollStore)
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      - name: Inject backend credentials (optional GitHub secrets)
+        env:
+          MERCHANT_CODE: ${{ secrets.MERCHANT_CODE }}
+          CLIENT_SIGNATURE: ${{ secrets.CLIENT_SIGNATURE }}
+        run: |
+          if [ -n "$MERCHANT_CODE" ] && [ -n "$CLIENT_SIGNATURE" ]; then
+            python3 - <<'PY'
+import base64, plistlib, os
+p = "KingShare/Config.plist"
+with open(p, "rb") as f:
+    data = plistlib.load(f)
+def pack(v):
+    return base64.b64encode(bytes([b ^ 0x5A for b in v.encode("utf-8")])).decode()
+data["MerchantPayload"] = pack(os.environ["MERCHANT_CODE"])
+data["ClientSignaturePayload"] = pack(os.environ["CLIENT_SIGNATURE"])
+with open(p, "wb") as f:
+    plistlib.dump(data, f)
+print("credentials injected")
+PY
+          else
+            echo "secrets not set, keeping Config.plist values"
+          fi
+
+      - name: Generate Xcode project
+        run: xcodegen generate
+
+      - name: Build (unsigned, iphoneos)
+        run: |
+          xcodebuild -project KingShare.xcodeproj -scheme KingShare \
+            -configuration Release -sdk iphoneos -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
+
+      - name: Package IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/KingShare.app Payload/
+          zip -qry KingShare-unsigned.ipa Payload
+          ls -lh KingShare-unsigned.ipa
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: KingShare-unsigned-ipa
+          path: KingShare-unsigned.ipa
+          if-no-files-found: error
+
+      - name: Publish release on tag
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: KingShare-unsigned.ipa
+          generate_release_notes: true
