@@ -8,16 +8,10 @@ final class CrashLog {
     static func start() {
         guard !started else { return }
         started = true
-        NSSetUncaughtExceptionHandler(CrashLog.exceptionHandler)
+        NSSetUncaughtExceptionHandler(kingCrashExceptionHandler)
     }
 
-    private static func exceptionHandler(_ exception: NSException) {
-        CrashLog.write(name: exception.name.rawValue,
-                       reason: exception.reason ?? "",
-                       callStack: exception.callStackSymbols.joined(separator: "\n"))
-    }
-
-    private static func write(name: String, reason: String, callStack: String) {
+    fileprivate static func write(name: String, reason: String, callStack: String) {
         guard let documents = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else { return }
         let dir = documents.appendingPathComponent("crash", isDirectory: true)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -49,4 +43,10 @@ final class CrashLog {
             try? fm.removeItem(at: extra)
         }
     }
+}
+
+private func kingCrashExceptionHandler(_ exception: NSException) {
+    CrashLog.write(name: exception.name.rawValue,
+                   reason: exception.reason ?? "",
+                   callStack: exception.callStackSymbols.joined(separator: "\n"))
 }
