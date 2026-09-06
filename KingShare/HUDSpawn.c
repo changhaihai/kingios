@@ -19,6 +19,8 @@ int hai_root_spawn(const char *executable, const char *state_path, pid_t *pid_ou
         posix_spawnattr_set_persona_uid_np(&attr, 0);
         posix_spawnattr_set_persona_gid_np(&attr, 0);
     }
+    posix_spawnattr_setpgroup(&attr, 0);
+    posix_spawnattr_setflags(&attr, POSIX_SPAWN_SETPGROUP);
 
     const char *args[] = { executable, "--state", state_path, NULL };
     rc = posix_spawn(pid_out, executable, NULL, &attr, (char *const *)args, environ);
