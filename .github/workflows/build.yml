@@ -24,7 +24,7 @@ jobs:
           xcodegen generate
           # XcodeGen currently emits objectVersion 77, which Xcode 15.4
           # (the macos-14 runner toolchain) cannot open.
-          python3 -c 'from pathlib import Path; p=Path("KingShare.xcodeproj/project.pbxproj"); t=p.read_text(); p.write_text(t.replace("objectVersion = 77;", "objectVersion = 56;").replace("compatibilityVersion = \\"Xcode 16.0\\";", "compatibilityVersion = \\"Xcode 15.0\\";"))'
+          python3 -c 'from pathlib import Path; p=Path("KingShare.xcodeproj/project.pbxproj"); t=p.read_text(); q=chr(34); p.write_text(t.replace("objectVersion = 77;", "objectVersion = 56;").replace("compatibilityVersion = "+q+"Xcode 16.0"+q+";", "compatibilityVersion = "+q+"Xcode 15.0"+q+";"))'
 
       - name: Build (unsigned, iphoneos)
         run: |
