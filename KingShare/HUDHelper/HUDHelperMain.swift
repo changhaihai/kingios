@@ -11,7 +11,8 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
     private var receiver: HUDStateReceiver?
     private var roomClient: HUDRoomClient?
     private var windowController: HUDGlobalWindowController?
-    private var keepAlivePlayer: AVAudioPlayer?
+    private var keepAliveEngine: AVAudioEngine?
+    private var keepAliveNode: AVAudioPlayerNode?
 
     func application(
         _ application: UIApplication,
@@ -74,13 +75,22 @@ final class HUDHelperAppDelegate: UIResponder, UIApplicationDelegate {
             let audio = AVAudioSession.sharedInstance()
             try audio.setCategory(.playback, options: [.mixWithOthers])
             try audio.setActive(true)
-            guard let url = Bundle.main.url(forResource: "silence", withExtension: "wav") else { return }
-            let player = try AVAudioPlayer(contentsOf: url)
-            player.numberOfLoops = -1
-            player.volume = 0
-            player.prepareToPlay()
-            player.play()
-            keepAlivePlayer = player
+            let engine = AVAudioEngine()
+            let node = AVAudioPlayerNode()
+            let format = AVAudioFormat(standardFormatWithSampleRate: 8_000, channels: 1)
+            guard let format, let buffer = AVAudioPCMBuffer(pcmFormat: format, frameCapacity: 8_000) else { return }
+            buffer.frameLength = 8_000
+            if let channel = buffer.floatChannelData?.pointee {
+                channel.initialize(repeating: 0, count: Int(buffer.frameLength))
+            }
+            engine.attach(node)
+            engine.connect(node, to: engine.mainMixerNode, format: format)
+            node.volume = 0
+            node.scheduleBuffer(buffer, at: nil, options: [.loops])
+            try engine.start()
+            node.play()
+            keepAliveEngine = engine
+            keepAliveNode = node
         } catch {
             // Background audio is an extra lifecycle guard; rendering still
             // works on systems that reject the session category.
