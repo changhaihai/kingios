@@ -10,6 +10,7 @@ final class AppState: ObservableObject {
     @Published var connected = false
     @Published var lastFrameAt: Date?
     @Published var startupMessage = "启动配置已完成"
+    let pip = PiPManager()
 
     let socket = RoomWebSocket()
 
@@ -25,6 +26,7 @@ final class AppState: ObservableObject {
             Task { @MainActor in
                 self?.frame = parsed
                 self?.lastFrameAt = Date()
+                self?.pip.update(frame: parsed, settings: self?.settings ?? DisplaySettings())
             }
         }
     }
@@ -55,5 +57,6 @@ final class AppState: ObservableObject {
             "secureOverlay": d.secureOverlay
         ]
         values.forEach { UserDefaults.standard.set($0.value, forKey: $0.key) }
+        pip.update(frame: frame, settings: settings)
     }
 }
