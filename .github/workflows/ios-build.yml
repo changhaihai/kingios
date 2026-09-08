@@ -26,9 +26,12 @@ jobs:
             -sdk iphoneos \
             -destination 'generic/platform=iOS' \
             -derivedDataPath build \
-            CODE_SIGNING_ALLOWED=NO \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=YES \
             CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY="" \
+            CODE_SIGN_IDENTITY="-" \
+            CODE_SIGN_STYLE=Manual \
             DEVELOPMENT_TEAM="" \
             build 2>&1 | tee device-build.log
 
@@ -51,6 +54,7 @@ jobs:
           rm -rf Payload KingShared-unsigned.ipa
           mkdir Payload
           cp -R build/Build/Products/Release-iphoneos/KingShared.app Payload/
+          codesign --force --deep --sign - Payload/KingShared.app
           /usr/bin/zip -qry KingShared-unsigned.ipa Payload
 
       - name: Upload unsigned IPA

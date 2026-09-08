@@ -5,6 +5,9 @@
     <key>CFBundleDisplayName</key><string>王者共享</string>
     <key>CFBundleName</key><string>KingShared</string>
     <key>CFBundleIdentifier</key><string>com.hai.kingshared</string>
+    <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
+    <key>CFBundlePackageType</key><string>APPL</string>
+    <key>LSRequiresIPhoneOS</key><true/>
     <key>CFBundleShortVersionString</key><string>1.0.0</string>
     <key>CFBundleVersion</key><string>1</string>
     <key>UILaunchScreen</key><dict/>
