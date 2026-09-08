@@ -32,6 +32,13 @@ jobs:
             DEVELOPMENT_TEAM="" \
             build 2>&1 | tee device-build.log
 
+      - name: Report device build errors
+        if: failure()
+        run: |
+          if [ -f device-build.log ]; then
+            grep -E "error:|fatal error:|The project|scheme|BUILD FAILED|Command .* failed" device-build.log | tail -40 | while IFS= read -r line; do echo "::error::$line"; done
+          fi
+
       - name: Upload device build log
         if: always()
         uses: actions/upload-artifact@v4
@@ -81,6 +88,13 @@ jobs:
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM="" \
             build 2>&1 | tee simulator-build.log
+
+      - name: Report simulator build errors
+        if: failure()
+        run: |
+          if [ -f simulator-build.log ]; then
+            grep -E "error:|fatal error:|The project|scheme|BUILD FAILED|Command .* failed" simulator-build.log | tail -40 | while IFS= read -r line; do echo "::error::$line"; done
+          fi
 
       - name: Upload simulator build log
         if: always()
