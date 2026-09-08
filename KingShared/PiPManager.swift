@@ -10,7 +10,7 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
     @Published private(set) var isRunning = false
     @Published private(set) var isSupported = false
 
-    private let displayLayer = AVSampleBufferDisplayLayer()
+    let displayLayer = AVSampleBufferDisplayLayer()
     private var controller: AVPictureInPictureController?
     private var timer: Timer?
     private var frame = BattleFrame()
@@ -37,6 +37,7 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
     func start() {
         guard let controller, isSupported, !controller.isPictureInPictureActive else { return }
         updateAudioSession(active: true)
+        pushFrame()
         isRunning = true
         timer?.invalidate()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0 / 15.0, repeats: true) { [weak self] _ in
@@ -87,6 +88,21 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
         context.setFillColor(UIColor(red: 7/255, green: 16/255, blue: 22/255, alpha: 1).cgColor)
         context.fill(CGRect(x: 0, y: 0, width: width, height: height))
         let scale = min(CGFloat(width) / 2400, CGFloat(height) / 1080)
+        let mapRect = CGRect(x: 14, y: 14, width: CGFloat(width - 28), height: CGFloat(height - 48))
+        context.setFillColor(UIColor(red: 11/255, green: 21/255, blue: 29/255, alpha: 0.95).cgColor)
+        context.fill(mapRect)
+        context.setStrokeColor(UIColor(red: 64/255, green: 85/255, blue: 99/255, alpha: 0.9).cgColor)
+        context.setLineWidth(2)
+        context.stroke(mapRect)
+        context.setStrokeColor(UIColor(red: 42/255, green: 59/255, blue: 71/255, alpha: 0.7).cgColor)
+        context.setLineWidth(1)
+        for step in 1..<4 {
+            let x = mapRect.minX + mapRect.width * CGFloat(step) / 4
+            let y = mapRect.minY + mapRect.height * CGFloat(step) / 4
+            context.move(to: CGPoint(x: x, y: mapRect.minY)); context.addLine(to: CGPoint(x: x, y: mapRect.maxY))
+            context.move(to: CGPoint(x: mapRect.minX, y: y)); context.addLine(to: CGPoint(x: mapRect.maxX, y: y))
+        }
+        context.strokePath()
         let factor = CGFloat((1 + settings.mapSpacing / 100).clamped(to: 0.5...2))
         func point(_ x: Float, _ y: Float) -> CGPoint {
             CGPoint(x: ((CGFloat(x) - 170) * factor + 170 + CGFloat(settings.offsetX)) * scale,

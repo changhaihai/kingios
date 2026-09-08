@@ -20,6 +20,7 @@ struct ContentView: View {
                 }.frame(height: 52).background(KingTheme.header)
             }
             if showSettings { SettingsSheet(isPresented: $showSettings, calibration: $calibration).environmentObject(state) }
+            PiPHostView(manager: state.pip).frame(width: 2, height: 2).opacity(0.01).allowsHitTesting(false)
         }
         .onAppear { loadSettings() }
     }
