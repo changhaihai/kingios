@@ -40,7 +40,46 @@ struct ContentView: View {
     }
 
     private var about: some View {
-        ScrollView { VStack(alignment: .leading, spacing: 12) { KingCard { VStack(alignment: .leading, spacing: 5) { Text("关于").font(.system(size: 17, weight: .bold)); Text("王者共享 v1.0.0").font(.system(size: 12)).foregroundStyle(KingTheme.secondary); Text("轻量·稳定的实时地图共享客户端").font(.system(size: 11)).foregroundStyle(KingTheme.secondary) } }; KingCard { VStack(alignment: .leading, spacing: 6) { Text("服务信息").font(.system(size: 14, weight: .bold)); Text("king.weilua.top").font(.system(size: 11)).foregroundStyle(KingTheme.secondary); Text("iOS 版本使用应用内 HUD；录屏广播可通过 ReplayKit 扩展接入。").font(.system(size: 11)).foregroundStyle(KingTheme.secondary) } }; KingCard { VStack(alignment: .leading, spacing: 8) { HStack { Text("鸣谢").font(.system(size: 14, weight: .bold)); Spacer(); Text("9 位").font(.system(size: 12)).foregroundStyle(KingTheme.gold) }; LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 8) { ForEach(["Detector", "野马", "柠檬", "锤子", "鲁班", "卡卡", "S", "归零", "猴子"], id: \.self) { name in VStack(spacing: 3) { Text(String(name.prefix(1))).font(.system(size: 13, weight: .bold)).frame(width: 34, height: 34).background(KingTheme.card).overlay(Circle().stroke(KingTheme.borderLight)).clipShape(Circle()); Text(name).font(.system(size: 10, weight: .bold)).lineLimit(1) } } } } } } }.padding(16) }
+        ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                KingCard {
+                    VStack(alignment: .leading, spacing: 5) {
+                        Text("关于").font(.system(size: 17, weight: .bold))
+                        Text("王者共享 v1.0.0").font(.system(size: 12)).foregroundStyle(KingTheme.secondary)
+                        Text("轻量·稳定的实时地图共享客户端").font(.system(size: 11)).foregroundStyle(KingTheme.secondary)
+                    }
+                }
+                KingCard {
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text("服务信息").font(.system(size: 14, weight: .bold))
+                        Text("king.weilua.top").font(.system(size: 11)).foregroundStyle(KingTheme.secondary)
+                        Text("iOS 版本使用应用内 HUD；录屏广播可通过 ReplayKit 扩展接入.").font(.system(size: 11)).foregroundStyle(KingTheme.secondary)
+                    }
+                }
+                KingCard {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            Text("鸣谢").font(.system(size: 14, weight: .bold))
+                            Spacer()
+                            Text("9 位").font(.system(size: 12)).foregroundStyle(KingTheme.gold)
+                        }
+                        LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 3), spacing: 8) {
+                            ForEach(["Detector", "野马", "柠檬", "锤子", "鲁班", "卡卡", "S", "归零", "猴子"], id: \.self) { name in
+                                VStack(spacing: 3) {
+                                    Text(String(name.prefix(1))).font(.system(size: 13, weight: .bold))
+                                        .frame(width: 34, height: 34)
+                                        .background(KingTheme.card)
+                                        .overlay(Circle().stroke(KingTheme.borderLight))
+                                        .clipShape(Circle())
+                                    Text(name).font(.system(size: 10, weight: .bold)).lineLimit(1)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            .padding(16)
+        }
     }
 
     private func tabButton(_ icon: String, _ title: String, _ value: Int) -> some View { Button { tab = value } label: { VStack(spacing: 2) { Image(systemName: icon).font(.system(size: 16)); Text(title).font(.system(size: 10)) }.foregroundStyle(tab == value ? KingTheme.gold : KingTheme.muted).frame(maxWidth: .infinity) } }
