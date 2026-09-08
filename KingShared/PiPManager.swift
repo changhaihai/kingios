@@ -21,7 +21,7 @@ final class PiPManager: NSObject, ObservableObject, AVPictureInPictureController
 
     override init() {
         super.init()
-        isSupported = AVPictureInPictureController.isPictureInPictureSupported
+        isSupported = AVPictureInPictureController.isPictureInPictureSupported()
         displayLayer.videoGravity = .resizeAspect
         if isSupported {
             controller = AVPictureInPictureController(contentSource: AVPictureInPictureController.ContentSource(sampleBufferDisplayLayer: displayLayer, playbackDelegate: self))
