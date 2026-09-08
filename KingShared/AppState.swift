@@ -11,6 +11,7 @@ final class AppState: ObservableObject {
     @Published var lastFrameAt: Date?
     @Published var startupMessage = "启动配置已完成"
     let pip = PiPManager()
+    let floatingHUD = FloatingHUDController()
 
     let socket = RoomWebSocket()
 
