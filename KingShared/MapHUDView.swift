@@ -43,7 +43,7 @@ struct MapHUDView: View {
             for item in frame.resources {
                 let p = point(item.x, item.y, resource: true)
                 if item.cooldown <= 0 { context.fill(Path(ellipseIn: CGRect(x: p.x-5*scale, y: p.y-5*scale, width: 10*scale, height: 10*scale)), with: .color(KingTheme.gold.opacity(opacity))) }
-                else { context.draw(Text("\(item.cooldown)s").font(.system(size: max(9, 18*scale))).foregroundStyle(KingTheme.gold.opacity(opacity)), at: CGPoint(x: p.x, y: p.y-12*scale)) }
+                else { context.draw(Text("\(item.cooldown)s").font(.system(size: max(9, 18*scale))).foregroundColor(KingTheme.gold.opacity(opacity)), at: CGPoint(x: p.x, y: p.y-12*scale)) }
             }
         }
         if settings.towers {
@@ -63,7 +63,7 @@ struct MapHUDView: View {
             let x = raw.x.clamped(to: radius...(size.width-radius)), y = raw.y.clamped(to: radius...(size.height-radius-8*scale))
             let center = CGPoint(x: x, y: y), accent = color(hero.blue).opacity(opacity)
             context.fill(Path(ellipseIn: CGRect(x:x-radius, y:y-radius, width:diameter, height:diameter)), with: .color(KingTheme.page.opacity(opacity)))
-            context.draw(Text(String(hero.id.suffix(3))).font(.system(size: max(8, radius * 0.48), weight: .bold)).foregroundStyle(.white.opacity(opacity)), at: center)
+            context.draw(Text(String(hero.id.suffix(3))).font(.system(size: max(8, radius * 0.48), weight: .bold)).foregroundColor(.white.opacity(opacity)), at: center)
             context.stroke(Path(ellipseIn: CGRect(x:x-radius, y:y-radius, width:diameter, height:diameter)), with: .color(accent), lineWidth: max(2, 3*CGFloat(settings.avatarScale)*scale))
             let hpRect = CGRect(x:x-radius, y:y+radius, width:diameter, height:max(3, 7*CGFloat(settings.avatarScale)*scale))
             context.fill(Path(roundedRect: hpRect, cornerRadius: 2), with: .color(.white.opacity(0.25*opacity)))

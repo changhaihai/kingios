@@ -98,9 +98,9 @@ struct SettingsSheet: View {
             Picker("", selection: $tab) { Text("显示").tag(0); Text("调节").tag(1) }.pickerStyle(.segmented).padding(10)
             ScrollView { if tab == 0 { displayPage } else { adjustPage } }.frame(maxHeight: .infinity)
             Text("● \(state.connected ? "已连接" : "未连接") · 应用内 HUD").font(.system(size: 10)).foregroundStyle(state.connected ? KingTheme.green : KingTheme.muted).padding(10)
-        }.frame(maxWidth: 420, maxHeight: 620).background(KingTheme.page).overlay(RoundedRectangle(cornerRadius: 12).stroke(KingTheme.border)).clipShape(RoundedRectangle(cornerRadius: 12)).padding(18).background(.black.opacity(0.55).ignoresSafeArea())
+        }.frame(maxWidth: 420, maxHeight: 620).background(KingTheme.page).overlay(RoundedRectangle(cornerRadius: 12).stroke(KingTheme.border)).clipShape(RoundedRectangle(cornerRadius: 12)).padding(18).background(Color.black.opacity(0.55))
     }
-    private var displayPage: some View { VStack(spacing: 2) { ToggleRow("英雄头像与血条", keyPath: \.heroes); ToggleRow("野怪与资源", keyPath: \.resources); ToggleRow("防御塔血量", keyPath: \.towers); ToggleRow("顶部信息", keyPath: \.topInfo); ToggleRow("不绘制己方英雄", keyPath: \.hideOwnTeam) }.padding(.horizontal, 14) }
+    private var displayPage: some View { VStack(spacing: 2) { ToggleRow(title: "英雄头像与血条", keyPath: \.heroes); ToggleRow(title: "野怪与资源", keyPath: \.resources); ToggleRow(title: "防御塔血量", keyPath: \.towers); ToggleRow(title: "顶部信息", keyPath: \.topInfo); ToggleRow(title: "不绘制己方英雄", keyPath: \.hideOwnTeam) }.padding(.horizontal, 14) }
     private var adjustPage: some View { VStack(spacing: 10) { SliderRow("整体 X", value: $state.settings.offsetX, range: -600...600); SliderRow("整体 Y", value: $state.settings.offsetY, range: -600...600); SliderRow("整体间隔", value: $state.settings.mapSpacing, range: -50...100); SliderRow("头像大小", value: $state.settings.avatarScale, range: 0.6...1.8); SliderRow("不透明度", value: $state.settings.opacity, range: 0.3...1); SliderRow("顶栏大小", value: $state.settings.topSize, range: 0.6...1.8); Toggle("显示校准框", isOn: $calibration).tint(KingTheme.green); Button("自动适配当前屏幕") { state.settings.offsetX = 0; state.settings.offsetY = 0; state.settings.mapSpacing = 0; state.saveSettings() }.buttonStyle(KingButtonStyle()) }.padding(14) }
 }
 
