@@ -36,12 +36,14 @@
     self.contextID = identifier.unsignedIntValue;
     if (!self.contextID) {
         if (error) *error=[NSError errorWithDomain:@"SharedHUD" code:1 userInfo:@{NSLocalizedDescriptionKey:@"无法获取 QuartzCore context ID"}];
+        NSLog(@"SharedHUD: failed to get context id from window.layer.context (context=%@)", context);
         return NO;
     }
 
     Class cls = NSClassFromString(@"SBSAccessibilityWindowHostingController");
     if (!cls) {
         if (error) *error=[NSError errorWithDomain:@"SharedHUD" code:2 userInfo:@{NSLocalizedDescriptionKey:@"缺少 SpringBoard 窗口托管权限"}];
+        NSLog(@"SharedHUD: SBSAccessibilityWindowHostingController class not found");
         return NO;
     }
     SEL shared = NSSelectorFromString(@"sharedInstance");
@@ -49,6 +51,7 @@
     SEL registerSelector = NSSelectorFromString(@"registerWindowWithContextID:atLevel:");
     if (![self.hostingController respondsToSelector:registerSelector]) {
         if (error) *error=[NSError errorWithDomain:@"SharedHUD" code:3 userInfo:@{NSLocalizedDescriptionKey:@"系统版本不支持窗口注册接口"}];
+        NSLog(@"SharedHUD: hostingController does not respond to registerWindowWithContextID:atLevel:");
         return NO;
     }
     ((void(*)(id,SEL,uint32_t,double))objc_msgSend)(self.hostingController,registerSelector,self.contextID,100000.0);
