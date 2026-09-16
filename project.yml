@@ -1,0 +1,36 @@
+name: SharedHUD
+options:
+  bundleIdPrefix: com.hai
+  deploymentTarget:
+    iOS: "14.0"
+settings:
+  base:
+    IPHONEOS_DEPLOYMENT_TARGET: "14.0"
+    TARGETED_DEVICE_FAMILY: "1,2"
+    SUPPORTS_MACCATALYST: NO
+    ENABLE_BITCODE: NO
+    CLANG_ENABLE_OBJC_ARC: YES
+    CODE_SIGNING_ALLOWED: NO
+    CODE_SIGNING_REQUIRED: NO
+targets:
+  SharedHUD:
+    type: application
+    platform: iOS
+    sources:
+      - Sources
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.hai.sharedhud
+        PRODUCT_NAME: SharedHUD
+        EXECUTABLE_NAME: SharedHUD
+        INFOPLIST_FILE: Resources/Info.plist
+        CODE_SIGN_ENTITLEMENTS: Resources/SharedHUD.entitlements
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0.0
+        OTHER_LDFLAGS: "$(inherited) -ObjC"
+    dependencies:
+      - sdk: UIKit.framework
+      - sdk: Foundation.framework
+      - sdk: QuartzCore.framework
+      - sdk: CoreGraphics.framework
+      - sdk: ImageIO.framework
