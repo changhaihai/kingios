@@ -24,8 +24,16 @@ static void SHText(NSString *text, CGPoint center, UIFont *font, UIColor *color)
     [text drawAtPoint:CGPointMake(center.x-z.width/2, center.y-z.height/2) withAttributes:a];
 }
 - (void)drawRect:(CGRect)rect {
-    CGContextRef c = UIGraphicsGetCurrentContext(); if (!c || !self.battleFrame) return;
+    CGContextRef c = UIGraphicsGetCurrentContext(); if (!c) return;
     SHSettings *s = self.settings; CGFloat width = self.bounds.size.width, height = self.bounds.size.height;
+
+    // 当没有 battleFrame 时，绘制调试占位信息，便于确认窗口是否可见
+    if (!self.battleFrame) {
+        NSString *status = self.connectionState.length ? self.connectionState : @"HUD 已启动，未连接";
+        SHText(status, CGPointMake(width/2, height/2), [UIFont boldSystemFontOfSize:14], UIColor.whiteColor);
+        return;
+    }
+
     CGFloat scale = MIN(width / 2400.0, height / 1080.0), factor = MIN(2, MAX(.5, 1 + s.mapSpacing/100.0));
     CGFloat (^mx)(CGFloat) = ^CGFloat(CGFloat x){ return ((x-170)*factor+170+s.offsetX)*scale; };
     CGFloat (^my)(CGFloat) = ^CGFloat(CGFloat y){ return ((y-170)*factor+170+s.offsetY)*scale; };
@@ -86,6 +94,6 @@ static void SHText(NSString *text, CGPoint center, UIFont *font, UIColor *color)
     if (!heroID.length || [self.loading containsObject:heroID]) return; [self.loading addObject:heroID];
     NSURL *url=[NSURL URLWithString:[NSString stringWithFormat:@"https://game.gtimg.cn/images/yxzj/img201606/heroimg/%@/%@.jpg",heroID,heroID]];
     __weak typeof(self) weakSelf=self;
-    [[NSURLSession.sharedSession dataTaskWithURL:url completionHandler:^(NSData *data,NSURLResponse *response,NSError *error){ dispatch_async(dispatch_get_main_queue(),^{ typeof(self) self=weakSelf; if(!self)return; UIImage *img=data?[UIImage imageWithData:data]:nil; if(img)[self.avatars setObject:img forKey:heroID]; [self.loading removeObject:heroID]; [self setNeedsDisplay]; }); }] resume];
+    [[NSURLSession.sharedSession dataTaskWithURL:url completionHandler:^(NSData *data,NSURLResponse *response,NSError *error){ dispatch_async(dispatch_get_main_queue(),^{ typeof(self) self=weakSelf; if (data.length) { UIImage *img=[UIImage imageWithData:data]; if (img) { [self.avatars setObject:img forKey:heroID]; } } [self.loading removeObject:heroID]; [self setNeedsDisplay]; }); }] resume];
 }
 @end
