@@ -13,6 +13,10 @@ FOUNDATION_EXPORT NSString * const SHPIDPath;
 @property(nonatomic, copy) NSString *host;
 @property(nonatomic) NSInteger port;
 @property(nonatomic) BOOL heroes, resources, minions, towers, hideOwnTeam, topInfo, secureOverlay;
+// 新增：仅绘制头像与模拟数据开关
+@property(nonatomic) BOOL onlyAvatars;
+@property(nonatomic) BOOL mockMode;
+
 @property(nonatomic) CGFloat offsetX, offsetY, resourceX, resourceY, minionX, minionY;
 @property(nonatomic) CGFloat mapSpacing, avatarScale, topX, topY, topScale;
 + (instancetype)load;
