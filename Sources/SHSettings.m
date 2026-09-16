@@ -21,6 +21,10 @@ static NSString * const SHSettingsPath = @"/var/mobile/Library/Preferences/com.h
     s.hideOwnTeam = [d[@"hideOwnTeam"] boolValue];
     s.topInfo = d[@"topInfo"] ? [d[@"topInfo"] boolValue] : YES;
     s.secureOverlay = [d[@"secureOverlay"] boolValue];
+    // new flags
+    s.onlyAvatars = d[@"onlyAvatars"] ? [d[@"onlyAvatars"] boolValue] : NO;
+    s.mockMode = d[@"mockMode"] ? [d[@"mockMode"] boolValue] : NO;
+
     s.offsetX = [d[@"offsetX"] doubleValue]; s.offsetY = [d[@"offsetY"] doubleValue];
     s.resourceX = [d[@"resourceX"] doubleValue]; s.resourceY = [d[@"resourceY"] doubleValue];
     s.minionX = [d[@"minionX"] doubleValue]; s.minionY = [d[@"minionY"] doubleValue];
@@ -35,6 +39,7 @@ static NSString * const SHSettingsPath = @"/var/mobile/Library/Preferences/com.h
         @"room": self.room ?: @"", @"host": self.host ?: @"", @"port": @(self.port),
         @"heroes": @(self.heroes), @"resources": @(self.resources), @"minions": @(self.minions), @"towers": @(self.towers),
         @"hideOwnTeam": @(self.hideOwnTeam), @"topInfo": @(self.topInfo), @"secureOverlay": @(self.secureOverlay),
+        @"onlyAvatars": @(self.onlyAvatars), @"mockMode": @(self.mockMode),
         @"offsetX": @(self.offsetX), @"offsetY": @(self.offsetY), @"resourceX": @(self.resourceX), @"resourceY": @(self.resourceY),
         @"minionX": @(self.minionX), @"minionY": @(self.minionY), @"mapSpacing": @(self.mapSpacing),
         @"avatarScale": @(self.avatarScale), @"topX": @(self.topX), @"topY": @(self.topY), @"topScale": @(self.topScale)
