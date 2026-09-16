@@ -86,4 +86,22 @@ static NSArray<NSArray<NSString *> *> *SHRecords(NSString *section, NSUInteger l
     frame.heroes = heroes; frame.resources = resources; frame.minions = minions; frame.towers = towers;
     return frame;
 }
+
++ (instancetype)mockFrame {
+    SHBattleFrame *f = [SHBattleFrame new];
+    NSMutableArray *heroes = [NSMutableArray array];
+    for (int i = 0; i < 3; i++) {
+        SHHero *h = [SHHero new];
+        h.heroID = [NSString stringWithFormat:@"H%d", i+1];
+        h.x = 400 + arc4random_uniform(1600);
+        h.y = 200 + arc4random_uniform(700);
+        h.hp = 50 + arc4random_uniform(51);
+        h.blue = (i % 2) == 0;
+        h.ownTeam = !h.blue;
+        [heroes addObject:h];
+    }
+    f.heroes = heroes; f.resources = @[]; f.minions = @[]; f.towers = @[];
+    return f;
+}
+
 @end
